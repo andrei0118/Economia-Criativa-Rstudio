@@ -35,13 +35,10 @@ GN-VENDAS é uma api.rest construída durante o processo de seleção da empresa
 
 # Como executar o projeto
 
-- Instalar as dependencias do nodejs e express.
-- Instalar o simulador de servidor Xampp.
-- Foi utilizado o banco de dados Mysql, sendo mysqladmin: (Usuário= "root") (senha " ").
-- Abra seu terminal e digite npm start para iniciar aplicação.
-- Página para cadastro de produtos: http://localhost:5000/cadastro , nesta página o administrador poderá cadastrar , editar ou mesmo deletar produtos de sua loja.
-- Página de listagem (loja) de produtos: http://localhost:5000/lojaprodutos/ , nesta página o cliente poderá visualizar todos produtos cadastrados na loja e assim compra - los.
-- Pagina de comprar e gerar boleto: http://localhost:5000/gerarboleto/:id , nesta página o cliente irá colocar seu dados sendo: Nome, CPF e telefone e assim gerar o boleto para efetivar a compra.
+- Instalar as dependencias do R e Rstudio.
+- Foi utilizado o banco de dados em execel.
+- Faça o download de todos os arquivos e execute o projeto nome = Economia-Criativa-Rstudio.Rproj.
+- Abra o arquivo Relatorio-Economia-Criativa.rmd
 
 
 
