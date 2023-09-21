@@ -1,0 +1,934 @@
+---
+title: "Relatório de Pesquisa - Estimativas da Economia Criativa do Distrito de Santo Antônio do Leite"
+date: "`r format(Sys.time(), '%d de %B, %Y')`"
+subtitle: '**Secretaria de Desenvolvimento Econômico, Inovação e Tecnologia**'
+author: "Diretoria de Estudos Econômicos | estudos.economicos@ouropreto.mg.gov.br"
+output:
+  pdf_document:
+    toc: true
+    includes:
+      in_header: header_sec.tex
+header-includes:
+- \renewcommand{\contentsname}{Sumário}
+- \renewcommand{\abstractname}{Resumo}
+fontsize: 11pt
+---
+
+\newpage
+# Agradecimentos
+
+A Secretaria de Desenvolvimento Econômico, Tecnologia e Inovação e, especialmente, a Diretoria de Estudos Econômicos da Secretaria de Desenvolvimento Econômico, Tecnologia e Inovação, agradecem a todas as pessoas e organizações que desempenharam um papel fundamental no sucesso desta pesquisa. Esse apoio e colaboração foram inestimáveis para a condução deste estudo e para a obtenção de resultados significativos. Em especial, gostaríamos de estender nossos agradecimentos à Thays, da Associação Viva o Leite, pela sua orientação e apoio ao longo de todo o processo de pesquisa. A expertise e experiência dela foram fundamentais para o desenvolvimento deste trabalho.
+
+Também expressamos nossos agradecimentos à Associação do Gouveia, às lideranças indígenas, ao Espaço Cultural Casa Amarela e à Associação Clube das Mães do Catete por suas participações e contribuições valiosas. Suas perspectivas e insights enriqueceram enormemente nosso estudo, proporcionando uma compreensão mais profunda e abrangente do tema em questão.
+
+É fundamental que as políticas públicas estejam alinhadas com as demandas e necessidades do setor da economia criativa. Isso envolve, entre outras coisas, a criação de um ambiente favorável, a simplificação de processos burocráticos e a facilitação do acesso a recursos e financiamentos específicos para os empreendimentos criativos.
+
+Por fim, reforçamos a importância de promover a diversidade e a inclusão na economia criativa. Valorizar a pluralidade de perspectivas, culturas e identidades contribui para a criação de um ambiente mais rico e inovador, que reflita a diversidade da sociedade.
+
+Expressamos, mais uma vez, nossos agradecimentos a todos os envolvidos nesta pesquisa e reforçamos nosso compromisso em continuar apoiando e promovendo o desenvolvimento da economia criativa em nossa região. Juntos, podemos construir um futuro próspero e sustentável, impulsionado pela criatividade, inovação e valorização do talento local.
+
+
+**Fábio Rocha** ^[Economista e diretor de Estudos Econômicos]
+
+**Andrei C. dos Santos** ^[Estatística e estagiário na Diretoria de Estudos Econômicos]
+
+**Amanda H. Lopes Valente** ^[Graduanda em estatística e estagiário na Diretoria de Estudos Econômicos]
+
+```{r, echo=F, eval=T, results='asis', fig.width=11, fig.height=5, fig.align='center', out.width=".9\\linewidth", warning=FALSE, message=FALSE, size='small'}
+
+library(tidyverse)
+library(readxl)
+library(readr)
+library(dplyr)
+library(lubridate)
+library(scales)
+library(knitr)
+library(gt)
+library(glue)
+library(ggthemes)
+library(esquisse)
+library(ggplot2)
+library(tinytex)
+library(pandoc)
+library(ggwordcloud)
+library(dplyr)
+library(scales)
+library(ggplot2)
+library(extrafont)
+library(gridExtra)
+library(kableExtra)
+library(wordcloud)
+library(RColorBrewer)
+```
+
+```{r, echo=F, eval=T, results='asis', fig.width=11, fig.height=5, fig.align='center', out.width=".9\\linewidth", warning=FALSE, message=FALSE, size='small'}
+
+dados <- read_excel("Economia_Criativa_FINAL.xlsx", col_names = TRUE)
+
+```
+
+```{r, echo=F, eval=T, results='asis', fig.width=8, fig.height=4, fig.align='center', out.width=".9\\linewidth", warning=FALSE, message=FALSE, size='small'}
+
+
+dados_1 <- dados %>% 
+      select(
+      `Idade`= "Qual sua idade?",
+      `idade_faixa`= "idade_faixa",
+      `Sexo`= "Sexo",
+      `Raça_cor` = "Você se declara:",
+      `Escolaridade` = "Qual seu nível de escolaridade?",
+      `Dependentes` = "Qual o número de pessoas que vivem da renda mensal familiar: (incluindo você)Se maior que cinco, digite em forma numérica. Ex: 6",
+       `Possui_comp` = "Possui computador",
+       `Possui_cel` = "Possui celular?",
+       `Acesso_net` = "Você possui acesso a internet ?",
+       `Tipo_net` = "Qual?",
+       `Qualidade_net` = "A qualidade do sinal de internet é:",
+       `Cnpj` = "Possui CNPJ? Ou seja, está formalizado.",
+       `Atv_desenvolvida` = "Atividade desenvolvida:",
+       `Atv_desenvolvida_2` = "Atividade desenvolvida_2",
+       `Qtd_trab_negocio` = "Contando com você, quantas pessoas trabalham no seu negócio/empreendimento?Se maior que 5, digite em outros em forma numérica. Ex: 6",
+       `Curso` = "Realizou algum tipo de curso ou formação para atuar ou se desenvolver na atividade?",
+       `Avaliacao` = "Quais são seus maiores desafios em relação a atividade que exerce?",
+       `Visao_negocio` = "Que visão você tem do seu negócio no futuro?",
+       `Divulgacao` = "Quais ferramentas você utiliza para promover/divulgar seus produtos/serviços?",
+       `Informacao` = "Quais são as suas principais fontes de informação?",
+      `Tipo_inf` = "Tipo_inf",
+       `Sac` = "Você tem um serviço de atendimento ao cliente?",
+       `Tempo_entrega` = "Quanto ao tempo para a entrega do produto/realização do serviço:",
+       `Emprestimo_12meses` = "Realizou algum empréstimo em instituição financeira nos últimos 12 meses?",
+       `Valor_emprestimo_1` = "Qual valor aproximadamente?",
+       `Realizar_emprestimo` = "Pretende realizar algum empréstimo nos próximos 12 meses?",
+       `Valor_emprestimo` = "Qual valor aproximadamente?_1",
+       `aux_emergencial`= "Recebeu algum auxílio financeiro governamental nos últimos 12 meses?Ex: Auxílio Emergencial",
+       `Renda_familiar_mensal` = "Qual a renda mensal total da sua família? (considere a renda de todos os integrantes da família que moram na mesma residência, incluindo você)",
+        `Qtd_celulares` = "Quantos celulares ?",
+        `ano_negocio` = "Ano que iniciou suas atividades:",
+        `anos`  = "Há quantos anos você tem o seu negócio",
+        `Reclamacao`  = "Reclamacao",
+        `Freq` = "Freq",
+        `Economia_criativa` = "Economia_criativa"
+)
+
+```
+
+\newpage
+# Introdução
+
+O presente estudo ocorreu durante a primeira quinzena de maio de 2023 no distrito de Ouro Preto - MG conhecido como Santo Antônio do Leite - MG, foram entrevistados 29 profissionais que participam da economia criativa na região. Além de promover a expressão cultural e artística, a economia criativa também impulsiona o crescimento econômico, a inovação e o empreendedorismo. Ela cria empregos, atrai investimentos, estimula o turismo e contribui para a formação de identidades culturais locais. 
+
+Muitos governos e organizações têm reconhecido o potencial da economia criativa e implementado políticas e programas de apoio a esse setor. Essas iniciativas buscam promover a formação de clusters criativos, incentivar a colaboração entre artistas e empresas, facilitar o acesso a financiamento e infraestrutura, e fomentar a educação criativa.
+
+O debate público tem pautado temas como inovação, desenvolvimento social, emprego, renda e crescimento econômico. Isso porque a literatura especializada parece convergir, em alguma medida, nesse sentido: inovação, tecnologia, indústria, criatividade e educação são algumas das variáveis que parecem determinar o crescimento econômico - liderado especialmente pelo aumento da produtividade - e, ao mesmo tempo, seu desenvolvimento.
+
+Assim, admitindo a influência da criatividade e o processo criativo no processo produtivo, essa pesquisa tem por objetivo quantificar e qualificar a economia criativa de Santo Antônio do Leite - Ouro Preto (MG). Mais precisamente, busca-se quantificar o número de empregos diretos (formais e informais) desta atividade, bem como características socioeconômicas e demográficas dos ocupados na atividade criativa.
+
+# Economia Criativa
+
+A economia criativa é um conceito que se refere à geração de valor econômico por meio da criatividade, da cultura e do conhecimento. É um setor emergente que engloba atividades e indústrias nas quais a criatividade desempenha um papel fundamental na geração de riqueza e emprego. Diferente da economia tradicional, baseada em recursos naturais ou industriais, a economia criativa se concentra na exploração de ativos intangíveis, como ideias, habilidades, talentos artísticos, propriedade intelectual e patrimônio cultural. Ela abrange setores como artes visuais e cênicas, música, design, cinema, televisão, literatura, arquitetura, moda, publicidade, software, jogos, turismo cultural, entre outros.
+
+A partir da definição proposta por Howkins (2001) e combinando com a estruturação conceitual da UNCTAD (2010), pode-se afirmar que a economia criativa:
+
+>>é o conjunto de atividades econômicas que dependem do conteúdo simbólico – nele incluído a criatividade como fator mais expressivo para a produção de bens e serviços; é um conceito em evolução com base em recursos criativos potencialmente geradores de crescimento e desenvolvimento econômico; pode promover ganhos de geração de renda, criação de emprego e exportação, promovendo a inclusão social, a diversidade cultural e o desenvolvimento humano; e abrange aspectos econômicos,culturais e sociais que interagem com a tecnologia e propriedade intelectual numa mesma dimensão e tem relações de transbordamento muito próximas com o turismo e o esporte (IPEA, 2013).
+
+# Classificação de atividades
+
+Do ponto de vista da pesquisa econômica e dos dados estatísticos, no entanto, um conjunto padronizado de definições e de um sistema comum de classificação é necessário como base para a concepção de um quadro viável para lidar com as indústrias criativas dentro do maior padrão de sistemas de classificação industrial, que se aplica a toda a economia. Assim, para fins deste trabalho, o modelo adotado se baseia no proposto pela UNCTAD (2010), com algumas adaptações. (IPEA, 2013).
+
+Conforme o modelo adotado, as indústrias criativas compreendem quatro grandes grupos – patrimônio, artes, mídia e criações funcionais, tendo em conta as suas características distintas.
+
+## Grupo 1 - Patrimônio cultural
+
+É identificado como a origem de todas as formas de artes e a alma das indústrias culturais e criativas, o ponto de partida para esta classificação. É a herança que reúne aspectos culturais dos pontos de vista histórico, antropológico, étnico, estético e social, e influência a criatividade dando origem a uma série de bens e serviços do patrimônio, bem como atividades culturais. Este grupo é, portanto, dividido em dois subgrupos:
+
+- expressões culturais tradicionais: artesanato, festivais e celebrações;
+
+- locais culturais: sítios arqueológicos, museus, bibliotecas e exposições.
+
+## Grupo 2 - Artes
+
+Este grupo inclui as indústrias criativas baseadas puramente em arte e cultura. A obra artística é inspirada no patrimônio, identidade de valores e no sentido simbólico. Este grupo é dividido em dois grandes subgrupos:
+
+- artes visuais: pintura, escultura, fotografia e antiguidades;
+
+- artes performáticas: música ao vivo, teatro, dança, ópera, circo e marionetes.
+
+## Grupo 3 - Mídia
+
+Este grupo abrange dois subgrupos de mídia que produzem conteúdo criativo visando gerar comunicação com o grande público:
+
+- publicações e mídia impressa: livros, imprensa e outras publicações;
+
+- audiovisual: cinema, televisão, rádio e outras formas de radiodifusão.
+
+## Grupo 4 - Criações funcionais
+
+Este grupo agrega atividades mais orientadas à demanda e atividades de criação de bens e serviços com fins funcionais. Está dividido nos seguintes subgrupos:
+
+- design: interiores, gráfico, moda, joias e brinquedos;
+
+- new media: software, games e conteúdo digital criativo;
+
+- serviços criativos: arquitetura, publicidade, P & D, serviços digitais e outros serviços criativos relacionados.
+
+# A Economia Criativa de Santo Antônio do Leite - MG
+
+Segundo o Censo do IBGE de 2010, o distrito de Antônio Leite abrigava um total de 1705 pessoas, sendo 831 homens e 874 mulheres. A economia criativa engloba uma ampla gama de setores e profissionais dedicados à criação, produção e distribuição de bens e serviços criativos. No distrito de Santo Antônio do Leite, destacam-se pessoas envolvidas nesse campo.
+
+Ao analisar o Gráfico 1, observamos que nas atividades artísticas encontramos artistas plásticos, pintores, escultores, musicistas e compositores locais. Esse grupo representa uma parte da indústria que utiliza a criatividade baseada em arte e cultura, equivalendo a 10% das atividades desenvolvidas, como mostrado no Gráfico 2.
+
+```{r, echo=F, eval=T, results='asis', fig.width=13.3, fig.height=7.5, fig.align='center', out.width=".9\\linewidth", warning=FALSE, message=FALSE, size='small'}
+
+ggplot(dados_1, aes(x = Atv_desenvolvida, fill = Atv_desenvolvida)) +
+  geom_bar() +
+  labs(x = NULL,
+       y = "Total de Pessoas",
+       title = "Quantidade de Pessoas Entrevistadas",
+       subtitle = "Gráfico 1 -  Santo Antônio do Leite - MG",
+       caption = "Fonte: Pesquisa de Campo Santo Antônio do Leite - MG | Elaboração: Diretoria de Estudos Econômicos") +
+  geom_text(stat = 'count', aes(label = ..count..), hjust = 1.8, color = "white", vjust = 0.5) +
+  coord_flip() +
+  scale_fill_hue() +
+  theme_minimal() +
+  theme(
+    panel.background = element_rect(fill = "white"), # Fundo branco
+    panel.grid.major = element_blank(), # Grade maior invisível
+    panel.grid.minor = element_blank(), # Grade menor invisível
+    plot.title = element_text(face = "bold", size = 16, family = "Helvetica", hjust = 0.5),
+    plot.subtitle = element_text(face = "italic", size = 14, family = "Helvetica", hjust = 0.5),
+    plot.caption = element_text(size = 10, family = "Helvetica", hjust = 0.5),
+    axis.text.x = element_text(face = "bold", size = 12, family = "Helvetica"),
+    axis.text.y = element_text(face = "bold", size = 12, family = "Helvetica")) +
+  guides(fill = FALSE)
+
+```
+
+## Quantidade de pessoas por atividade desenvolvida
+
+Perguntamos também qual o quantitativo total de pessoas que estavam envolvidas na atividade para além da pessoa entrevistada. A atividade que se sobressaiu foi a produção de bebidas artesanais, seguida de turismo rual e produção de doces, queijos ou geleias.
+
+Costura, bordado e crochê apresentou um número elevado porque a pessoa que foi entrevistada estava no mesmo grupo de outras entrevistadas, o que ocasionou em duplicidade de contagem. De todo modo, pode-se afirmar que aproximadamente 100 pessoas do distrito estão envolvidas com alguma atividade criativa.
+
+```{r, echo=F, eval=T, results='asis', fig.width=13.3, fig.height=7.5, fig.align='center', out.width=".9\\linewidth", warning=FALSE, message=FALSE, size='small'}
+
+dados_1 %>%
+  group_by(Atv_desenvolvida) %>%
+  summarise(total = sum(Qtd_trab_negocio)) %>%
+  ggplot(aes(x = Atv_desenvolvida, y = total)) +
+  geom_col() +
+  labs(x = NULL,
+       y = "Total de Pessoas",
+       title = "Quantidade de Pessoas Envolvidas com Economia Criativa",
+       subtitle = "Gráfico 2 - Santo Antônio do Leite - MG",
+       caption = "Fonte: Pesquisa de Campo Santo Antônio do Leite - MG | Elaboração: Diretoria de Estudos Econômicos") +
+  geom_text(aes(label = total), hjust = 1.8, color = "white", vjust = 0.5) +
+  coord_flip() +
+  scale_fill_hue() +
+  theme_minimal() +
+  theme(
+    panel.background = element_rect(fill = "white"), # Fundo branco
+    panel.grid.major = element_blank(), # Grade maior invisível
+    panel.grid.minor = element_blank(), # Grade menor invisível
+    plot.title = element_text(face = "bold", size = 16, family = "Helvetica", hjust = 0.5),
+    plot.subtitle = element_text(face = "italic", size = 14, family = "Helvetica", hjust = 0.5),
+    plot.caption = element_text(size = 10, family = "Helvetica", hjust = 0.5),
+    axis.text.x = element_text(face = "bold", size = 12, family = "Helvetica"),
+    axis.text.y = element_text(face = "bold", size = 12, family = "Helvetica")) +
+  guides(fill= FALSE)
+
+```
+
+## Atividades da economia criativa
+
+Enquanto isso, em relação ao grupo de patrimônio cultural (Gráfico 2), encontramos profissionais envolvidos na organização de eventos culturais, como festivais, exposições e feiras de artes, além de costureiras, bordadeiras, crocheteiras e outras atividades relacionadas, como o turismo rural. O artesanato em cimento, barro ou papel e a pintura, também se destacam como expressões culturais fortes na região, representando cerca de 25% das atividades. Essas criações incluem objetos utilitários e decorativos, que utilizam técnicas tradicionais e materiais característicos da região, refletindo a identidade cultural, os costumes e a história local (Gráfico 1).
+
+Observa-se no Gráfico 2, que o grupo de patrimônio cultural é a atividade dominante, correspondendo a aproximadamente 50% da economia criativa da região de Santo Antônio do Leite - MG. No segmento de criações funcionais (Gráfico 2), destacam-se produtores de joias, estilistas, ourives e outros profissionais que atuam na indústria da moda, abrangendo a criação, produção e comercialização de bens e serviços funcionais, como roupas, vestidos e acessórios, como bolsas, carteiras, xalés e joias (Gráfico 1).
+
+```{r, echo=F, eval=T, results='asis', fig.width=13.3, fig.height=7.5, fig.align='center', out.width=".9\\linewidth", warning=FALSE, message=FALSE, size='small'}
+
+ ggplot(dados_1) +
+ aes(x = Economia_criativa, fill = Economia_criativa) +
+ geom_bar() +
+   theme_classic() +
+ scale_fill_hue(direction = 1) +
+  theme(legend.position = "none")+
+ labs(x = "", 
+      y = "", 
+      title = "Atividades Principais da Economia Criativa",
+      subtitle  = "Gráfico 3 - Santo Antônio do Leite - MG",    
+      caption = "Fonte: Pesquisa de Campo Santo Antônio do Leite - MG | Elaboração: Diretoria de   Estudos Ecônomicos", fill = "Economia Criativa") +
+  geom_text(stat='count', aes(label = ..count..), hjust=1.8, color="white") +
+ coord_flip() +
+  theme(
+    panel.background = element_rect(fill = "white"), # Fundo branco
+    panel.grid.major = element_blank(), # Grade maior invisível
+    panel.grid.minor = element_blank(), # Grade menor invisível
+    plot.title = element_text(face = "bold", size = 16, family = "Helvetica", hjust = 0.5),
+    plot.subtitle = element_text(face = "italic", size = 14, family = "Helvetica", hjust = 0.5),
+    plot.caption = element_text(size = 10, family = "Helvetica", hjust = 0.5),
+    axis.text.x = element_text(face = "bold", size = 12, family = "Helvetica"),
+    axis.text.y = element_text(face = "bold", size = 12, family = "Helvetica"))
+
+```
+
+
+Da mesma forma, a gastronomia local também se destaca, com chefs, cozinheiros e empreendedores que utilizam a criatividade na elaboração de óleos essenciais, cervejas artesanais, licores feitos a partir de frutos regionais, além do desenvolvimento de conceitos gastronômicos e a criação de experiências culinárias, como doces, queijos e geleias. Esses profissionais fazem parte do grupo de Criações Funcionais, correspondendo a 37% dos trabalhadores entrevistados pela pesquisa (Gráfico 2).
+
+
+## Quantidade de pessoas por faixa etária e sexo
+
+No que diz respeito à análise demográfica dos entrevistados, é possível constatar que a maioria das pessoas entrevistadas foram adultos entre 30-60 anos (Gráfico 3). Além disso, observa-se uma predominância de pessoas do sexo feminino. É importante ressaltar que o grupo de entrevistados é diverso, abrangendo diferentes gerações e experiências de vida.
+
+```{r, echo=F, eval=T, results='asis', fig.width=13.3, fig.height=7.5, fig.align='center', out.width=".9\\linewidth", warning=FALSE, message=FALSE, size='small'}
+
+  ggplot(dados_1) +
+  aes(x = idade_faixa, fill = Sexo) +
+  geom_bar() +
+  theme_minimal() +
+  theme(legend.title = element_blank())+
+  labs(x = "Faixa Etária",
+       y = "",
+       title = "Quantidade de Pessoas por Faixa Etária e Sexo",
+       subtitle = "Gráfico 4 - Santo Antônio do Leite - MG",
+       caption = "Fonte: Pesquisa de Campo Santo Antônio do Leite - MG | Elaboração: Diretoria de Estudos Econômicos") +
+  geom_text(stat='count', aes(label = ..count..), vjust=1.8, color="white") +
+  theme(
+    panel.background = element_rect(fill = "white"), # Fundo branco
+    panel.grid.major = element_blank(), # Grade maior invisível
+    panel.grid.minor = element_blank(), # Grade menor invisível
+    plot.title = element_text(face = "bold", size = 16, family = "Helvetica", hjust = 0.5),
+    plot.subtitle = element_text(face = "italic", size = 14, family = "Helvetica", hjust = 0.5),
+    plot.caption = element_text(size = 10, family = "Helvetica", hjust = 0.5),
+    axis.text.x = element_text(face = "bold", size = 12, family = "Helvetica"),
+    axis.text.y = element_text(face = "bold", size = 12, family = "Helvetica"))
+
+```
+
+## Quantidade de pessoas por sexo
+
+De forma geral, conforme já evidenciado no gráfico 3, 62% (18) dos entrevistados nesta pesquisa foram pessoas do sexo feminino. Isso sinaliza, em algum grau, que a atividade criativa no distrito é predominantemente desenvolvida por mulheres.
+
+```{r, echo=F, eval=T, results='asis', fig.width=13.3, fig.height=7.5, fig.align='center', out.width=".9\\linewidth", warning=FALSE, message=FALSE, size='small'}
+
+ggplot(dados_1) +
+  aes(x = Sexo, fill = Sexo) +
+  geom_bar() +
+  theme_minimal() +
+  scale_fill_hue(direction = 1) +
+  geom_text(stat='count', aes(label = ..count..), vjust= -1, color="black") +
+  labs(x = "", 
+       y = "", 
+       title = "Entrevistados por Sexo",
+       subtitle = "Gráfico 5 - Santo Antônio do Leite - MG",
+       caption = "Fonte: Pesquisa de Campo Santo Antônio do Leite - MG | Elaboração: Diretoria de Estudos Econômicos") +
+  theme(
+    panel.background = element_rect(fill = "white"), # Fundo branco
+    panel.grid.major = element_blank(), # Grade maior invisível
+    panel.grid.minor = element_blank(), # Grade menor invisível
+    plot.title = element_text(face = "bold", size = 16, family = "Helvetica", hjust = 0.5),
+    plot.subtitle = element_text(face = "italic", size = 14, family = "Helvetica", hjust = 0.5),
+    plot.caption = element_text(size = 10, family = "Helvetica", hjust = 0.5),
+    axis.text.x = element_text(face = "bold", size = 12, family = "Helvetica"),
+    axis.text.y = element_text(face = "bold", size = 12, family = "Helvetica"))
+
+```
+
+## Raça/cor dos trabalhadores da economia criativa
+
+Olhando mais detidamente para o recorte raça/cor, é possivel obervar que, 12 das 18 pessoas do sexo feminino são pessoas negras (pretos e pardos), isto é, 66%. Pelo lado das pessoas do sexo masculino, apenas 4 são negros, 36%.
+
+```{r, echo=F, eval=T, results='asis', fig.width=13.3, fig.height=7.5, fig.align='center', out.width=".9\\linewidth", warning=FALSE, message=FALSE, size='small'}
+
+dados_1 %>%
+  count(Raça_cor, Sexo) %>%
+  ggplot(aes(x = Raça_cor, y = n)) + 
+  geom_col()+
+  geom_label(aes(label = n))+
+  facet_wrap(~Sexo)+
+  theme_minimal() +
+  labs(x = "", 
+    y = "", 
+    title = "Quantidade de Entrevistados Raça/cor X Sexo",
+    subtitle  = "Gráfico 6 - Santo Antônio do Leite - MG",
+    fill = "Renda Familiar Mensal",
+    caption = "Fonte: Pesquisa de Campo Santo Antônio do Leite - MG | Elaboração: Diretoria de Estudos Ecônomicos") +  
+  coord_flip()+
+  theme(
+    panel.background = element_rect(fill = "white"), # Fundo branco
+    panel.grid.major = element_blank(), # Grade maior invisível
+    panel.grid.minor = element_blank(), # Grade menor invisível
+    plot.title = element_text(face = "bold", size = 16, family = "Helvetica", hjust = 0.5),
+    plot.subtitle = element_text(face = "italic", size = 14, family = "Helvetica", hjust = 0.5),
+    plot.caption = element_text(size = 10, family = "Helvetica", hjust = 0.5),
+    axis.text.x = element_text(face = "bold", size = 12, family = "Helvetica"),
+    axis.text.y = element_text(face = "bold", size = 12, family = "Helvetica"))
+
+```
+
+## Ocupação principal e secundária
+
+Outro ponto a ser observado é que é bastante comum os artistas terem mais de uma profissão, representando cerca de 27% dos profissionais (Gráfico 4). Essa realidade decorre, supomos, da natureza imprevisível e instável do mercado de arte, no qual pode ser desafiador obter uma renda estável apenas com a prática artística. Alternativamente, também, estimamos que, pelo fato dessas atividades serem desenvolvidas por pessoas com idade entre 30-60 anos, boa parte já se encontra aposentada de suas atividades formais, o que leva crer que a atividade criativa vem apenas como uma atividade hobbie. 
+
+Além disso, muitos artistas possuem interesses e habilidades em áreas diversas, o que os leva a explorar diferentes profissões para complementar sua renda. Essa diversificação de atividades profissionais é uma estratégia adotada por muitos artistas para garantir uma maior estabilidade financeira e explorar suas múltiplas habilidades e talentos.
+
+```{r, echo=F, eval=T, results='asis', fig.width=13.3, fig.height=7.5, fig.align='center', out.width=".9\\linewidth", warning=FALSE, message=FALSE, size='small'}
+
+# Gráfico de Barras - Totais de Pessoas x Atividades Desenvolvidas
+ggplot(dados_1) +
+  aes(x = Atv_desenvolvida_2, fill = Atv_desenvolvida_2) +
+  geom_bar() +
+  labs(x = "",
+       y = "",
+       title = "Quantidade de Pessoas por Atividade Secundária",
+       subtitle = "Gráfico 7 - Santo Antônio do Leite - MG",
+       caption = "Fonte: Pesquisa de Campo Santo Antônio do Leite - MG | Elaboração: Diretoria de Estudos Econômicos") +
+  geom_text(stat='count', aes(label = ..count..), hjust=1.8, color="white") +
+   coord_flip() +
+  theme_minimal() +
+  theme(
+    panel.background = element_rect(fill = "white"), # Fundo branco
+    panel.grid.major = element_blank(), # Grade maior invisível
+    panel.grid.minor = element_blank(), # Grade menor invisível
+    plot.title = element_text(face = "bold", size = 16, family = "Helvetica", hjust = 0.5),
+    plot.subtitle = element_text(face = "italic", size = 14, family = "Helvetica", hjust = 0.5),
+    plot.caption = element_text(size = 10, family = "Helvetica", hjust = 0.5),
+    axis.text.x = element_text(face = "bold", size = 12, family = "Helvetica"),
+    axis.text.y = element_text(face = "bold", size = 12, family = "Helvetica")) +
+  guides(fill = FALSE)
+
+```
+
+## Fonte de informação e tecnologia
+
+Foi identificado que a internet - o buscador Google - e as redes sociais, são um dos principais canais utilizados pelas pessoas para buscar conhecimento, informações e notícias, com uma preferência de 65% dos entrevistados (Gráfico 5). Essa alta preferência pela internet e redes sociais reflete a crescente dependência das plataformas online como fonte de informações e a facilidade de acesso a uma ampla variedade de conteúdo disponível.
+
+Além disso, outros canais como rádio, televisão, familiares e amigos também foram mencionados pelos entrevistados, indicando que essas fontes tradicionais ainda desempenham um papel relevante na busca por informações.
+
+No entanto, é importante destacar que a preferência pela internet e redes sociais, como principais canais de busca de conhecimento, reflete a influência cada vez maior da tecnologia digital na sociedade atual. A facilidade de acesso, a agilidade na obtenção de informações e a possibilidade de interação nas redes sociais tornaram esses canais muito populares entre os entrevistados.
+
+```{r, echo=F, eval=T, results='asis', fig.width=13.3, fig.height=7.5, fig.align='center', out.width=".9\\linewidth", warning=FALSE, message=FALSE, size='small'}
+
+ggplot(dados_1) +
+  aes(x = Tipo_inf, fill = Tipo_inf) +
+  geom_bar() +
+  theme_minimal() +
+  theme(legend.position = "none")+
+  scale_fill_hue(direction = 1) +
+  labs(x = "",
+       y = "", 
+       title = "Canais Onde Buscam Informações",
+       subtitle  = "Gráfico 8 - Santo Antônio do Leite - MG",  
+       fill = "Tipos",
+       caption = "Fonte: Pesquisa de Campo Santo Antônio do Leite - MG | Elaboração: Diretoria de Estudos Econômicos") +
+  geom_text(stat='count', aes(label = ..count..), hjust=1.8, color="white") +
+  coord_flip() +
+  theme(
+    panel.background = element_rect(fill = "white"), # Fundo branco
+    panel.grid.major = element_blank(), # Grade maior invisível
+    panel.grid.minor = element_blank(), # Grade menor invisível
+    plot.title = element_text(face = "bold", size = 16, family = "Helvetica", hjust = 0.5),
+    plot.subtitle = element_text(face = "italic", size = 14, family = "Helvetica", hjust = 0.5),
+    plot.caption = element_text(size = 10, family = "Helvetica", hjust = 0.5),
+    axis.text.x = element_text(face = "bold", size = 12, family = "Helvetica"),
+    axis.text.y = element_text(face = "bold", size = 12, family = "Helvetica")) +
+  guides(fill = FALSE)
+
+```
+
+## Escolaridade e acesso a computador
+
+Também perguntamos aos entrevistados sobre acesso à tecnologia (computador, celular e internet). Todos disseram ter celular (em alguns casos o grupo familiar tinha mais de um) e todos disseram ter acesso a internet variando em algum grau a qualidade do sinal. Porém nem todos tinham computador disponível para uso pessoal. Das 29, 7 (24,13%) pessoas não tinham computadores.
+
+```{r, echo=F, eval=T, results='asis', fig.width=13.3, fig.height=7.5, fig.align='center', out.width=".9\\linewidth", warning=FALSE, message=FALSE, size='small'}
+
+dados_1 %>%
+  count(Escolaridade, Possui_comp) %>%
+  ggplot(aes(x=Possui_comp, y=n)) + 
+  geom_col(aes(fill=Possui_comp))+
+  theme_minimal() +
+  geom_label(aes(label=n))+
+  theme(legend.position = "none") +
+  facet_wrap(~Escolaridade)+
+labs(x = "", 
+    y = "", 
+    title = "Escolaridade x Acesso a Computador",
+    subtitle  = "Gráfico 9 - Santo Antônio do Leite - MG",
+    caption = "Fonte: Pesquisa de Campo Santo Antônio do Leite - MG | Elaboração: Diretoria de Estudos Ecônomicos") +
+ coord_flip() +
+  theme(
+    panel.background = element_rect(fill = "white"), # Fundo branco
+    panel.grid.major = element_blank(), # Grade maior invisível
+    panel.grid.minor = element_blank(), # Grade menor invisível
+    plot.title = element_text(face = "bold", size = 16, family = "Helvetica", hjust = 0.5),
+    plot.subtitle = element_text(face = "italic", size = 14, family = "Helvetica", hjust = 0.5),
+    plot.caption = element_text(size = 10, family = "Helvetica", hjust = 0.5),
+    axis.text.x = element_text(face = "bold", size = 12, family = "Helvetica"),
+    axis.text.y = element_text(face = "bold", size = 12, family = "Helvetica")) +
+  guides(fill = FALSE)
+
+```
+
+## Qualidade da internet
+
+É importante ressaltar que, mais de 37,9% dos entrevistados avaliaram a qualidade da internet como muito ruim, ruim, ou razoável (Gráfico 6). Essa percepção negativa pode ter um impacto significativo no acesso e busca por conhecimento, uma vez que limita a capacidade das pessoas de se conectarem e obterem informações online. Além disso, essa limitação também pode dificultar a comercialização de bens e serviços, uma vez que a parte expressiva das transações - vide o Pix - ocorre de forma online atualmente.
+
+É fundamental que sejam tomadas iniciativas para melhorar a infraestrutura de internet na região, a fim de proporcionar uma conexão de qualidade para todos os moradores. Isso não apenas facilitaria o acesso à informação e ao conhecimento, mas também impulsionaria o desenvolvimento econômico, permitindo que os negócios locais se beneficiem da crescente tendência de comércio online.
+
+```{r, echo=F, eval=T, results='asis', fig.width=13.3, fig.height=7.5, fig.align='center', out.width=".9\\linewidth", warning=FALSE, message=FALSE, size='small'}
+
+ggplot(dados_1) +
+  aes(x = Qualidade_net, fill = Qualidade_net) +
+  geom_bar() +
+  theme_minimal() +
+  theme(legend.position = "none")+
+  scale_fill_hue(direction = 1) +
+  labs(x = "", 
+       y = "", 
+       title = "Qualidade do Sinal de Internet na Região",
+       subtitle  = "Gráfico 10 - Santo Antônio do Leite - MG",
+       fill = "Qualidade da Internet",
+       caption = "Fonte: Pesquisa de Campo Santo Antônio do Leite - MG | Elaboração: Diretoria de Estudos Econômicos") +
+  geom_text(stat='count', aes(label = ..count..), hjust=1.8, color="white") +
+  coord_flip() +
+  theme(
+    panel.background = element_rect(fill = "white"), # Fundo branco
+    panel.grid.major = element_blank(), # Grade maior invisível
+    panel.grid.minor = element_blank(), # Grade menor invisível
+    plot.title = element_text(face = "bold", size = 16, family = "Helvetica", hjust = 0.5),
+    plot.subtitle = element_text(face = "italic", size = 14, family = "Helvetica", hjust = 0.5),
+    plot.caption = element_text(size = 10, family = "Helvetica", hjust = 0.5),
+    axis.text.x = element_text(face = "bold", size = 12, family = "Helvetica"),
+    axis.text.y = element_text(face = "bold", size = 12, family = "Helvetica"))
+
+```
+
+## Quantidade de celulares por grupo familiar
+
+A respeito da quantidade de celulares por domicílio 10 (34,4%) disseram ter apenas um dispositivo e 19 (65,5%), dois ou mais celulares. Isso mostra que os avanços tecnológicos viabilizaram o acesso em massa da população a inovações que antes era restrito a grupos de maior poder aquisitivo. O desafio agora é viabilizar a conexao a internet de qualidade. 
+
+```{r, echo=F, eval=T, results='asis', fig.width=13.3, fig.height=7.5, fig.align='center', out.width=".9\\linewidth", warning=FALSE, message=FALSE, size='small'}
+
+dados_1 %>%
+  count(Qtd_celulares) %>%
+  ggplot(aes(x=as.character(Qtd_celulares), y=n)) + 
+  geom_col()+
+  geom_label(aes(label=n))+
+  theme_minimal() +
+labs(x = "", 
+    y = "", 
+    title = "Quantidade de Celulares por Grupo Familiar",
+    subtitle  = "Gráfico 11 - Santo Antônio do Leite - MG",
+    fill = "Renda Familiar Mensal",
+    caption = "Fonte: Pesquisa de Campo Santo Antônio do Leite - MG | Elaboração: Diretoria de Estudos Ecônomicos")  +
+  theme(
+    panel.background = element_rect(fill = "white"), # Fundo branco
+    panel.grid.major = element_blank(), # Grade maior invisível
+    panel.grid.minor = element_blank(), # Grade menor invisível
+    plot.title = element_text(face = "bold", size = 16, family = "Helvetica", hjust = 0.5),
+    plot.subtitle = element_text(face = "italic", size = 14, family = "Helvetica", hjust = 0.5),
+    plot.caption = element_text(size = 10, family = "Helvetica", hjust = 0.5),
+    axis.text.x = element_text(face = "bold", size = 12, family = "Helvetica"),
+    axis.text.y = element_text(face = "bold", size = 12, family = "Helvetica"))
+
+```
+
+## Cursos de capacitação
+
+Os cursos profissionalizantes são programas de formação voltados para o desenvolvimento de habilidades específicas em uma área profissional. Eles oferecem um treinamento prático e focado, preparando as pessoas para ingressar no mercado de trabalho ou aprimorar suas habilidades existentes. 
+
+Como podemos observar, mais de 80% de todos trabalhadores entrevistados (tabela 1) fizeram algum tipo de curso profissionalizante para exercerem suas profissões.
+
+
+
+```{r, echo=F, eval=T, results='asis', fig.width=13.3, fig.height=7.5, fig.align='center', out.width=".9\\linewidth", warning=FALSE, message=FALSE, size='small'}
+
+tabela = dados_1 %>%
+  count(Atv_desenvolvida, Curso)
+
+tebela <- tabela %>%
+  pivot_wider(names_from = "Curso", values_from = "n")
+
+tebela$Não <- replace(tebela$Não, is.na(tebela$Não), 0)
+
+tebela %>%
+  gt(groupname_col = "") %>%
+  tab_header(title = md("**Curso de Especialização**"),
+             subtitle = glue("Tabela 1 ")) %>%
+  tab_source_note(md("**Fonte**: Pesquisa de Campo | **Elaboração**: Diretoria de Estudos Econômicos")) %>%
+  cols_label(Atv_desenvolvida = "Atividade",
+             Não = "Não Fez curso",
+             Sim = "Fez curso")
+```
+
+Note (gráfico 7), que a grande maioria dos trabalhadores fizeram cursos que espera-se contribuir, de alguma maneira, para o desenvolvimento de habilidades específicas, melhoria das perspectivas de emprego e renda e agilidade na entrada no mercado de trabalho. 
+
+```{r, echo=F, eval=T, results='asis', fig.width=13.3, fig.height=7.5, fig.align='center', out.width=".9\\linewidth", warning=FALSE, message=FALSE, size='small'}
+
+ggplot(dados_1) +
+  aes(x = Curso, fill = Curso) +
+  geom_bar() +
+  theme_minimal() +
+  theme(legend.position = "none")+
+  scale_fill_hue(direction = 1) +
+  labs(x = "",
+       y = "",
+       title = "Cursos Profissionalizantes",
+       subtitle  = "Gráfico 12 - Santo Antônio do Leite - MG",
+       caption = "Fonte: Pesquisa de Campo Santo Antônio do Leite - MG | Elaboração: Diretoria de Estudos Ecônomicos") +
+  geom_text(stat='count', aes(label = ..count..), color="black", vjust= -0.6) +
+  theme(
+    panel.background = element_rect(fill = "white"), # Fundo branco
+    panel.grid.major = element_blank(), # Grade maior invisível
+    panel.grid.minor = element_blank(), # Grade menor invisível
+    plot.title = element_text(face = "bold", size = 16, family = "Helvetica", hjust = 0.5),
+    plot.subtitle = element_text(face = "italic", size = 14, family = "Helvetica", hjust = 0.5),
+    plot.caption = element_text(size = 10, family = "Helvetica", hjust = 0.5),
+    axis.text.x = element_text(face = "bold", size = 12, family = "Helvetica"),
+    axis.text.y = element_text(face = "bold", size = 12, family = "Helvetica"))
+
+```
+
+## Formalidade
+
+Em relação à formalidade, mais de 50% das empresas possuem (Cadastro Nacional de Pessoa Jurídica) - CNPJ utilizado para estabelecer relações comerciais com outras empresas, fornecedores e clientes. Ao fornecer o CNPJ, a empresa demonstra sua legalidade, facilitando o estabelecimento de parcerias e transações comerciais.
+
+A informalidade entre os trabalhadores de economia criativa de Santo Antônio do Leite é relativamente elevada, 44,85% (13) desempenham a atividade de forma informal. Esse dado converge, inclusive, com a taxa de informalidade do mercado de trabalho geral no Brasil. É importante considerar que a informalidade acarreta em problemas para os trabalhadores, já que em tese, estes estão desprotegidos do sistema de proteção social. Ademais, pelo fato de não ser possível comprovar renda, estes mesmos trabalhadores acabam por ficar excluídos de alguns mercados, como é o de crédito.
+
+```{r, echo=F, eval=T, results='asis', fig.width=13.3, fig.height=7.5, fig.align='center', out.width=".9\\linewidth", warning=FALSE, message=FALSE, size='small'}
+
+ggplot(dados_1) +
+  aes(x = Cnpj, fill = Cnpj) +
+  geom_bar() +
+  theme_minimal() +
+  scale_fill_hue(direction = 1) +
+  theme(legend.position = "none")+
+  labs(x = "",
+       y = "",
+       title = "Possuem CNPJ")+
+ geom_text(stat='count', aes(label = ..count..), color="black", vjust = -0.6) +
+  theme(
+    panel.background = element_rect(fill = "white"), # Fundo branco
+    panel.grid.major = element_blank(), # Grade maior invisível
+    panel.grid.minor = element_blank(), # Grade menor invisível
+    plot.title = element_text(face = "bold", size = 16, family = "Helvetica", hjust = 0.5),
+    plot.subtitle = element_text(face = "italic", size = 14, family = "Helvetica", hjust = 0.5),
+    plot.caption = element_text(size = 10, family = "Helvetica", hjust = 0.5),
+    axis.text.x = element_text(face = "bold", size = 12, family = "Helvetica"),
+    axis.text.y = element_text(face = "bold", size = 12, family = "Helvetica"))
+
+```
+
+## Análise socioecônomica
+
+No que diz respeito a renda do grupo familiar das pessoas que tem atividades ligadas a economia criativa, como ocupação, é possível obervar que um número pequeno de familias vivem com até 1 salário mínimo (10.3%). Ao mesmo tempo, um grupo de 16 (55,1%) vive com valores entre 1 a 3 salários mínimos e um grupo de 8 (27,5%) vive com 3 a 5 salários mínimo.
+
+```{r, echo=F, eval=T, results='asis', fig.width=13.3, fig.height=7.5, fig.align='center', out.width=".9\\linewidth", warning=FALSE, message=FALSE, size='small'}
+
+ggplot(dados_1) +
+  aes(x = Renda_familiar_mensal) +
+  geom_bar() +
+  theme_minimal() +
+  labs(x = "",
+       y = "Quantidade de Famílias", 
+       title = "Renda Mensal por Grupos Familiares",
+       subtitle  = "Gráfico 8 - Santo Antônio do Leite - MG",
+       caption = "Fonte: Pesquisa de Campo Santo Antônio do Leite - MG | Elaboração: Diretoria de Estudos Econômicos") +
+  geom_text(stat='count', aes(label = ..count..), hjust=1.8, color="white") +
+  coord_flip() +
+  theme_minimal() +
+  theme(
+    panel.background = element_rect(fill = "white"), # Fundo branco
+    panel.grid.major = element_blank(), # Grade maior invisível
+    panel.grid.minor = element_blank(), # Grade menor invisível
+    plot.title = element_text(face = "bold", size = 16, family = "Helvetica", hjust = 0.5),
+    plot.subtitle = element_text(face = "italic", size = 14, family = "Helvetica", hjust = 0.5),
+    plot.caption = element_text(size = 10, family = "Helvetica", hjust = 0.5),
+    axis.text.x = element_text(face = "bold", size = 12, family = "Helvetica"),
+    axis.text.y = element_text(face = "bold", size = 12, family = "Helvetica"))
+
+```
+
+
+Analisando a distribuição da renda do grupo familiar pelo número de dependentes da renda do grupo, é possível perceber haver uma distribuição heterôgenea para famlías que vivem com 1 a 3 salários mínimos. Neste recorte, famílias com 1 a 4 pessoas vivem com essa renda. O grupo 3 a 5 salários mínimos também tem grupo familiar variável. Já o grupo de até 1 salário mínimo, tanto famílias com 1 pessoa, vivem com esse recurso, quanto famílias com 3. Ou seja, supondo que vivam com `R$`1320,00, os 3 membros do grupo familiar, esse grupo já estaria classificado como abaixo da linha da pobreza, que segundo a FGV, são pessoas que vivem com valores inferios a `R$`497,00 por mêss.  
+
+```{r, echo=F, eval=T, results='asis', fig.width=13.3, fig.height=7.5, fig.align='center', out.width=".9\\linewidth", warning=FALSE, message=FALSE, size='small'}
+
+dados_1 %>%
+  count(Dependentes, Renda_familiar_mensal) %>%
+  ggplot(aes(x=Renda_familiar_mensal, y=n)) + 
+  geom_col(aes(fill=as.character(Dependentes)))+
+  theme_minimal() +
+labs(x = "", 
+    y = "Frequência", 
+    title = "Número de pessoas por grupo familiar",
+    subtitle  = "Gráfico 9 - Santo Antônio do Leite - MG",
+    fill = "Composição do grupo familiar",
+    caption = "Fonte: Pesquisa de Campo Santo Antônio do Leite - MG | Elaboração: Diretoria de Estudos Ecônomicos") +
+  coord_flip()+
+  theme_minimal() +
+  theme(
+    panel.background = element_rect(fill = "white"), # Fundo branco
+    panel.grid.major = element_blank(), # Grade maior invisível
+    panel.grid.minor = element_blank(), # Grade menor invisível
+    plot.title = element_text(face = "bold", size = 16, family = "Helvetica", hjust = 0.5),
+    plot.subtitle = element_text(face = "italic", size = 14, family = "Helvetica", hjust = 0.5),
+    plot.caption = element_text(size = 10, family = "Helvetica", hjust = 0.5),
+    axis.text.x = element_text(face = "bold", size = 12, family = "Helvetica"),
+    axis.text.y = element_text(face = "bold", size = 12, family = "Helvetica"))
+
+```
+
+## Escolaridade e renda do grupo familiar
+
+Ao analisar a relação entre educação e rendimento do grupo familiar é possível constatar que existe uma predominância de maiores rendimentos do grupo familiar mais elevado quanto os anos de escolaridade do individuo entrevistado. Isto é, para pessoas com superior completo, 6 entrevistados responderam ter entre 3 a 5 salários minimos, enquanto que os entrevistados que responderam ter ensino médio completo, 8 disseram ter entre 1 a 3 salários mínimos.
+
+Esse dado converge com o que evidência a literatura em economia do trabalho (e Teoria do Capital Humano), que diz existir uma correlação positiva entre anos de estudo e rendimento médio. O principal achado para o caso brasileiro sugere que, para cada ano adicional de estudo, em média, o individuo aumenta a renda em algo em torno de 5 a 7% podendo variar de região para região. Ou seja, trata-se de uma taxa de retorno do investimento em educação.
+
+```{r, echo=F, eval=T, results='asis', fig.width=13.3, fig.height=7.5, fig.align='center', out.width=".9\\linewidth", warning=FALSE, message=FALSE, size='small'}
+
+dados_1 %>%
+  count(Escolaridade, Renda_familiar_mensal) %>%
+  ggplot(aes(x=Renda_familiar_mensal, y=n)) + 
+  geom_col()+
+  geom_label(aes(label=n))+
+  facet_wrap(~Escolaridade)+
+  theme_minimal() +
+labs(x = "", 
+    y = "", 
+    title = "Renda familiar por grau de escolaridade do entrevistado",
+    subtitle  = "Gráfico 9 - Santo Antônio do Leite - MG",
+    fill = "Renda Familiar Mensal",
+    caption = "Fonte: Pesquisa de Campo Santo Antônio do Leite - MG | Elaboração: Diretoria de Estudos Ecônomicos") +
+ coord_flip()+
+  theme_minimal() +
+  theme(
+    panel.background = element_rect(fill = "white"), # Fundo branco
+    panel.grid.major = element_blank(), # Grade maior invisível
+    panel.grid.minor = element_blank(), # Grade menor invisível
+    plot.title = element_text(face = "bold", size = 16, family = "Helvetica", hjust = 0.5),
+    plot.subtitle = element_text(face = "italic", size = 14, family = "Helvetica", hjust = 0.5),
+    plot.caption = element_text(size = 10, family = "Helvetica", hjust = 0.5),
+    axis.text.x = element_text(face = "bold", size = 12, family = "Helvetica"),
+    axis.text.y = element_text(face = "bold", size = 12, family = "Helvetica"))
+```
+
+## Recebimento de auxilio governamental
+
+Quanto perguntados se tinham recebido algum tipo de auxílio governamental nos últimos doze meses, 27,5% disseram que sim, isto é, apenas 8 dos 29 entrevistados.
+
+ O auxílo governamental é um benefício fornecido pelo governo para ajudar indivíduos ou grupos em situações de dificuldade financeira ou social. Ele pode assumir diversas formas, visando fornecer suporte, promover a igualdade social, estimular a economia e fornecer serviços essenciais.
+
+```{r, echo=F, eval=T, results='asis', fig.width=13.33, fig.height=7.5, fig.align='center', out.width=".9\\linewidth", warning=FALSE, message=FALSE, size='small'}
+
+ggplot(dados_1) +
+  aes(x = aux_emergencial, fill = aux_emergencial) +
+  theme_minimal() +
+  geom_bar() +
+  scale_fill_hue(direction = 1) +
+  theme(legend.position = "none")+
+  labs(x = "", 
+       y = "", 
+       title = "Receberam Auxílio Governamental",
+       caption = "Fonte: Pesquisa de Campo Santo Antônio do Leite - MG | Elaboração: Diretoria de Estudos Econômicos") +
+  geom_text(stat='count', aes(label = ..count..), color="black", face = "bold", vjust = -1) +
+  theme(
+    panel.background = element_rect(fill = "white"), # Fundo branco
+    panel.grid.major = element_blank(), # Grade maior invisível
+    panel.grid.minor = element_blank(), # Grade menor invisível
+    plot.title = element_text(face = "bold", size = 16, family = "Helvetica", hjust = 0.5),
+    plot.subtitle = element_text(face = "italic", size = 14, family = "Helvetica", hjust = 0.5),
+    plot.caption = element_text(size = 10, family = "Helvetica", hjust = 0.5),
+    axis.text.x = element_text(face = "bold", size = 12, family = "Helvetica"),
+    axis.text.y = element_text(face = "bold", size = 12, family = "Helvetica"))
+
+```
+
+## Anos de existência do negócio
+
+Também perguntamos sobre o ano de início das atividades a cada um dos entrevistados. O empreendimento mais antigo data o ano 1980, enquanto que o mais recente, 2021. Em termos gerais, 6 empreendimentos iniciaram suas atividades na década de 1980, 4 na década de 1990, 6 na década de  2000, 6 na década de 2010, e 7 nesta última década que iniciou em 2020. Ao que parece, a última década ocorreu algum tipo de transformação no distrito que favoreceu o surgimento de novos produtores locais de economia criativa.
+
+```{r, echo=F, eval=T, results='asis', fig.width=13.3, fig.height=7.5, fig.align='center', out.width=".9\\linewidth", warning=FALSE, message=FALSE, size='small'}
+
+dados_1 %>%
+  count(ano_negocio) %>%
+  ggplot(aes(x=as.character(ano_negocio), y=n)) + 
+  labs(
+    x = "", 
+    y = "", 
+    title = "Anos de Existência do Negócio",
+    subtitle  = "Gráfico - Santo Antônio do Leite - MG",
+    fill = "Renda Familiar Mensal",
+    caption = "Fonte: Pesquisa de Campo Santo Antônio do Leite - MG | Elaboração: Diretoria de Estudos Ecônomicos") +
+  geom_col()+
+  geom_label(aes(label=n))+
+  theme_minimal() +
+  theme(
+    panel.background = element_rect(fill = "white"), # Fundo branco
+    panel.grid.major = element_blank(), # Grade maior invisível
+    panel.grid.minor = element_blank(), # Grade menor invisível
+    plot.title = element_text(face = "bold", size = 16, family = "Helvetica", hjust = 0.5),
+    plot.subtitle = element_text(face = "italic", size = 14, family = "Helvetica", hjust = 0.5),
+    plot.caption = element_text(size = 10, family = "Helvetica", hjust = 0.5),
+    axis.text.x = element_text(face = "bold", size = 12, family = "Helvetica"),
+    axis.text.y = element_text(face = "bold", size = 12, family = "Helvetica"))
+  
+```
+
+## Tempo de entrega do produto  ou serviço
+
+No que diz respeito ao tempo de entrega dos produtos e serviços produzidos é possível perceber uma diversidade expressiva. 6 (20,6%) disseram entregar em até uma semana, outros 6 disseram precisar de mais de uma semana para realizar a entrega, 5 (17%) entregam na hora, e 2 (6%) entregam em até 24 horas.
+
+Uma informação que se pode tirar dessa variedade de prazos de entrega é o grau de diversificação desta atividade. Ou seja, pelo fato desses produtos e serviços necessitarem de diferentes prazos de entrega, sinaliza que existe um grau de complexidade diferenciado para produção deles, o que nos leva a crer, segundo a literatura em complexidade econômica, que tais produtos e serviços possuem uma maior valor agregado comparativamente a produtos e serviços primários. 
+
+```{r, echo=F, eval=T, results='asis', fig.width=13.3, fig.height=7.5, fig.align='center', out.width=".9\\linewidth", warning=FALSE, message=FALSE, size='small'}
+
+dados_1 %>%
+  count(Tempo_entrega) %>%
+  ggplot(aes(x=Tempo_entrega, y=n)) + 
+  geom_col()+
+  geom_label(aes(label=n))+
+  theme_minimal() +
+labs(x = "", 
+    y = "", 
+    title = "Tempo de entrega do produto  ou serviço",
+    subtitle  = "Gráfico - Santo Antônio do Leite - MG",
+    fill = "Renda Familiar Mensal",
+    caption = "Fonte: Pesquisa de Campo Santo Antônio do Leite - MG | Elaboração: Diretoria de Estudos Ecônomicos") +
+ coord_flip() +
+  theme(
+    panel.background = element_rect(fill = "white"), # Fundo branco
+    panel.grid.major = element_blank(), # Grade maior invisível
+    panel.grid.minor = element_blank(), # Grade menor invisível
+    plot.title = element_text(face = "bold", size = 16, family = "Helvetica", hjust = 0.5),
+    plot.subtitle = element_text(face = "italic", size = 14, family = "Helvetica", hjust = 0.5),
+    plot.caption = element_text(size = 10, family = "Helvetica", hjust = 0.5),
+    axis.text.x = element_text(face = "bold", size = 12, family = "Helvetica"),
+    axis.text.y = element_text(face = "bold", size = 12, family = "Helvetica"))
+  
+
+```
+
+## Visão do negócio
+
+Ainda na mesma bateria de perguntas, questionamos como o entrevistado via o seu empreendimento no futuro. Isto é, tende a crescer, tende a manter no mesmo nível, tende a encerrar ou não aplicável. Para nossa surpresa, 23 (79,3%) dos 29 entrevistados disseram que seu negócio ou atividade tende a crescer, enquanto que apenas 2 (6%) disseram tender a encerrar. Neste caso, as duas atividades que disseram tender encerrar são: a fabricação de joias e produção de óleos essenciais.
+
+```{r, echo=F, eval=T, results='asis', fig.width=13.3, fig.height=7.5, fig.align='center', out.width=".9\\linewidth", warning=FALSE, message=FALSE, size='small'}
+
+dados_1 %>%
+  count(Visao_negocio, Atv_desenvolvida) %>%
+  ggplot(aes(x=Visao_negocio, y=n)) + 
+  geom_col(aes(fill=Atv_desenvolvida))+
+  #geom_label(aes(label=n))+
+  theme_minimal() +
+labs(x = "", 
+    y = "", 
+    title = "Visão do negócio",
+    subtitle  = "Gráfico - Santo Antônio do Leite - MG",
+    fill = "",
+    caption = "Fonte: Pesquisa de Campo Santo Antônio do Leite - MG | Elaboração: Diretoria de Estudos Ecônomicos") +
+ coord_flip() +
+  theme(
+    panel.background = element_rect(fill = "white"), # Fundo branco
+    panel.grid.major = element_blank(), # Grade maior invisível
+    panel.grid.minor = element_blank(), # Grade menor invisível
+    plot.title = element_text(face = "bold", size = 16, family = "Helvetica", hjust = 0.5),
+    plot.subtitle = element_text(face = "italic", size = 14, family = "Helvetica", hjust = 0.5),
+    plot.caption = element_text(size = 10, family = "Helvetica", hjust = 0.5),
+    axis.text.x = element_text(face = "bold", size = 12, family = "Helvetica"),
+    axis.text.y = element_text(face = "bold", size = 12, family = "Helvetica"))
+
+```
+
+## Desafios do distrito em desenvolver a economia criativa
+
+Na última parte da entrevista perguntamos ainda quais os principais desafios enfrentados pelos produtores de economia criativa no distrito. Com as respostas obtidas, geramos uma nuvem de palavras que representa esses desafios. As frases em maior tamanho sinalizam a frequência com que a dificuldade foi apontada. Em termos gerais, a baixa demanda, mobilidade, comunicação e informalidade foram os principais desafios relatados pelos produtores locais. 
+
+```{r, echo=F, eval=T, results='asis', fig.width=13.3, fig.height=7.5, fig.align='center', out.width=".9\\linewidth", warning=FALSE, message=FALSE, size='small'}
+
+df <- dados_1
+
+# Adicionar a coluna "angle" com valores aleatórios
+df$angle <- sample(c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), nrow(df), replace = TRUE)
+
+# Definir uma semente para reprodução dos resultados
+set.seed(1)
+
+# Gerar o gráfico de nuvem de palavras
+ggplot(df, aes(label = Reclamacao, size = Freq, color = Reclamacao, angle = angle)) +
+  geom_text_wordcloud() +
+  scale_size_area(max_size = 14) +
+  theme_classic() +
+  labs(title = "Os Maiores Desafios para Profissionais da Economia Criativa",
+       subtitle = "Gráfico 10 - Santo Antônio do Leite - MG",
+       caption = "Fonte: Pesquisa de Campo Santo Antônio do Leite - MG | Elaboração: Diretoria de Estudos Ecônomicos") +
+  theme(
+    panel.background = element_rect(fill = "white"), # Fundo branco
+    panel.grid.major = element_blank(), # Grade maior invisível
+    panel.grid.minor = element_blank(), # Grade menor invisível
+    plot.title = element_text(face = "bold", size = 16, family = "Helvetica", hjust = 0.5),
+    plot.subtitle = element_text(face = "italic", size = 14, family = "Helvetica", hjust = 0.5),
+    plot.caption = element_text(size = 10, family = "Helvetica", hjust = 0.5),
+    axis.text.x = element_text(face = "bold", size = 12, family = "Helvetica"),
+    axis.text.y = element_text(face = "bold", size = 12, family = "Helvetica"))
+
+```
+
+
+# Considerações finais
+
+Ao analisar a economia criativa no distrito de Santo Antônio do Leite, em Ouro Preto - MG, podemos observar a diversidade de atividades e profissionais envolvidos nesse setor. A economia criativa desempenha um papel fundamental no impulsionamento do crescimento econômico, da inovação e do empreendedorismo, além de contribuir para a formação da identidade cultural local.
+
+No distrito, as atividades artísticas, ligadas às expressões culturais tradicionais e às artes visuais e cênicas, representam 10% da economia criativa. O patrimônio cultural, incluindo eventos culturais, artesanato e pintura, corresponde a, aproximadamente, 50% das atividades. Já as criações funcionais, como moda, joias e gastronomia local, abrangem cerca de 37% dos trabalhadores nesse setor.
+
+Ao analisar a demografia dos profissionais entrevistados, constatamos que a maioria está na faixa etária de 30 a 60 anos, com uma predominância de mulheres. Observa-se também que a atividade criativa é predominantemente desenvolvida por mulheres, representando 66% dos entrevistados do sexo feminino. Em relação à raça/cor dos trabalhadores da economia criativa, 66% das mulheres entrevistadas são negras, enquanto 36% dos homens são negros.
+
+É importante ressaltar que muitos artistas têm mais de uma profissão, o que pode ser uma estratégia para garantir maior estabilidade financeira. Além disso, a internet e as redes sociais são as principais fontes de informação utilizadas pelos profissionais, refletindo a crescente dependência das plataformas online na busca por conhecimento.
+
+No entanto, é importante destacar que nem todos os profissionais têm acesso a computadores pessoais, o que pode limitar o desenvolvimento de suas atividades. Além disso, a qualidade da internet foi avaliada negativamente por mais de um terço dos entrevistados, o que pode impactar o acesso à informação e a comercialização de bens e serviços.
+
+Diante desse cenário, alguns dos desafios enfrentados pelos profissionais da economia criativa no distrito de Santo Antônio do Leite incluem baixa demanda pelos produtos/serviços, o acesso a recursos tecnológicos (inclusive inviabilizando a chegada de informações), oferta de transporte público, informalidade e melhoria da qualidade da internet.
+
+Portanto, é necessário promover políticas e programas que incentivem o desenvolvimento da economia criativa, garantindo acesso igualitário a recursos e oportunidades para todos os profissionais. Além disso, investimentos em infraestrutura tecnológica e na melhoria da qualidade da internet são essenciais para impulsionar o crescimento desse setor. A valorização da diversidade cultural e étnica também é fundamental para fortalecer a identidade local e promover a inclusão social.
+
+Em conclusão, a economia criativa desempenha um papel relevante no distrito de Santo Antônio do Leite, contribuindo para o crescimento econômico, a inovação e a expressão cultural. Superar os desafios existentes e promover um ambiente favorável para o desenvolvimento da economia criativa é essencial para o progresso e a sustentabilidade.
+
+\newpage
+# Referências
+
+- Instituto Brasileiro de Geografia e Estatística. Censo Demográfico 2010. Disponível em: <https://censo2010.ibge.gov.br/resultados.html>. Acesso em: 07 de junho de 2023.
+- NYKO, Diego; ZENDRON, Patricia. Economia criativa. 2018.
+- OLIVEIRA, João Maria de; ARAÚJO, Bruno César Pino Oliveira de; SILVA, Leandro Valério. Panorama da economia criativa no Brasil. 2013.
+- Economia Criativa: uma possibilidade para o desenvolvimento regional. Disponível em: https://fgvprojetos.fgv.br/sites/fgvprojetos.fgv.br/files/economiacriativa_formatacaosite.pdf. Acesso em: 7 jun. 2023.
+
+
+\newpage
+
+# Anexo
+
+### Perguntas da entrevista
+
+1. Qual sua idade?
+2. Sexo
+3. Você se declara:
+4. Qual seu nível de escolaridade?
+5. Qual a renda mensal total da sua família? (considere a renda de todos os integrantes da família que moram na mesma residência, incluindo você)
+6. Qual o número de pessoas que vivem da renda mensal familiar: (incluindo você) Se maior que cinco, digite em forma numérica. Ex: 6
+7. Possui computador?
+8. Possui celular?
+9. Quantos celulares?
+10. Você possui acesso à internet?
+11. Qual?
+12. A qualidade do sinal de internet é:
+13. Possui CNPJ? Ou seja, está formalizado.
+14. Atividade desenvolvida:
+15. Ano que iniciou suas atividades:
+16. Contando com você, quantas pessoas trabalham no seu negócio/empreendimento? Se maior que 5, digite em outros em forma numérica. Ex: 6
+17. Realizou algum tipo de curso ou formação para atuar ou se desenvolver na atividade?
+18. Quais são seus maiores desafios em relação à atividade que exerce?
+19. Que visão você tem do seu negócio no futuro?
+20. Quais ferramentas você utiliza para promover/divulgar seus produtos/serviços?
+21. Quais são as suas principais fontes de informação?
+22. Você tem um serviço de atendimento ao cliente?
+23. Quanto ao tempo para a entrega do produto/realização do serviço:
+24. Realizou algum empréstimo em instituição financeira nos últimos 12 meses? Qual valor aproximadamente?
+25. Pretende realizar algum empréstimo nos próximos 12 meses? Qual valor aproximadamente?
+26. Recebeu algum auxílio financeiro governamental nos últimos 12 meses? Ex: Auxílio Emergencial
