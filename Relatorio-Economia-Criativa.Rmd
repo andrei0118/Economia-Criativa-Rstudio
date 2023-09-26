@@ -34,6 +34,23 @@ Expressamos, mais uma vez, nossos agradecimentos a todos os envolvidos nesta pes
 
 **Amanda H. Lopes Valente** ^[Graduanda em estatística e estagiário na Diretoria de Estudos Econômicos]
 
+
+
+```{r}
+usethis::pr_init(branch = "main")
+
+```
+
+
+```{r}
+
+usethis::use_git_config(user.name = "andrei0118", # Seu nome
+                        user.email = "andrei0118.santos@gmail.oom",
+                        user.password = "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") # Seu email teste
+
+```
+
+
 ```{r, echo=F, eval=T, results='asis', fig.width=11, fig.height=5, fig.align='center', out.width=".9\\linewidth", warning=FALSE, message=FALSE, size='small'}
 
 library(tidyverse)
