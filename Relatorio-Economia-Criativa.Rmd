@@ -858,7 +858,7 @@ ggplot(df, aes(label = Reclamacao, size = Freq, color = Reclamacao, angle = angl
   scale_size_area(max_size = 14) +
   theme_classic() +
   labs(title = "Os Maiores Desafios para Profissionais da Economia Criativa",
-       subtitle = "Gráfico 10 - Santo Antônio do Leite - MG",
+       subtitle = "Santo Antônio do Leite - MG",
        caption = "Fonte: Pesquisa de Campo Santo Antônio do Leite - MG | Elaboração: Diretoria de Estudos Ecônomicos") +
   theme(
     panel.background = element_rect(fill = "white"), # Fundo branco
