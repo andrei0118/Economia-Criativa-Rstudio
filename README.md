@@ -4,8 +4,8 @@
 [![NPM](https://img.shields.io/npm/l/react)](https://github.com/andrei0118/gn-vendas/blob/master/LICENSE)
 
 ## Sobre o projeto
-GN-VENDAS é uma api.rest construída durante o processo de seleção da empresa GERENCIANET. A aplicação consiste em um sistema de vendas online, onde  o administrador poderá  cadastrar  produtos de uma loja,  e seu cliente final poderá comprar e gerar o boleto de pagamento  do item desejado.
-É possível dividir o projeto em 3 partes:
+
+O presente estudo ocorreu durante a primeira quinzena de maio de 2023 no distrito de Ouro Preto - MG conhecido como Santo Antônio do Leite - MG, foram entrevistados 29 profissionais que participam da economia criativa na região. Além de promover a expressão cultural e artística, a economia criativa também impulsiona o crescimento econômico, a inovação e o empreendedorismo. Ela cria empregos, atrai investimentos, estimula o turismo e contribui para a formação de identidades culturais locais.
 
 ![Relatorio-Economia-Criativa-01](https://github.com/andrei0118/Economia-Criativa-Rstudio/assets/75299828/80366e2a-22c9-41aa-938a-931c297e8df7)
 ![Relatorio-Economia-Criativa-02](https://github.com/andrei0118/Economia-Criativa-Rstudio/assets/75299828/5ff87626-cfff-4d99-9664-f44139beaaa4)
