@@ -40,8 +40,9 @@ O presente estudo ocorreu durante a primeira quinzena de maio de 2023 no distrit
 - Faça o download de todos os arquivos e execute o projeto nome = Economia-Criativa-Rstudio.Rproj.
 - Abra o arquivo Relatorio-Economia-Criativa.rmd
 
+## Ferramentas
 
-
+- Rstudio
 
 ## Autor
 
