@@ -33,7 +33,7 @@ O presente estudo ocorreu durante a primeira quinzena de maio de 2023 no distrit
 ![Relatorio-Economia-Criativa-24](https://github.com/andrei0118/Economia-Criativa-Rstudio/assets/75299828/c03e86aa-f767-48a9-bdb3-aff7c2edaad1)
 
 
-# Como executar o projeto
+## Como executar o projeto
 
 - Instalar as dependencias do R e Rstudio.
 - Foi utilizado o banco de dados em execel.
